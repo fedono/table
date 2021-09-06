@@ -25,6 +25,9 @@ module.exports = {
     port: 8080,
     open: true
   },
+  resolve: {
+    extensions: ['.js', '.ts', '.tsx', '.json', '.less']
+  },
   plugins: [
         new HtmlWebpackPlugin({
             template: './index.html'

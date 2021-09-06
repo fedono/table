@@ -2,6 +2,9 @@ import React from 'react';
 
 export type Key = React.Key;
 
+export type GetRowKey<RecordType> = (record: RecordType, index?: number) => Key;
+
+
 export type DefaultRecordType = Record<string, any>;
 
 // 待定吧，也不一定要现在来写，写到了这个功能的时候再来写
@@ -14,6 +17,9 @@ export interface CellType<RecordType> {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+
+  colSpan?: number;
+  rowSpan?: number;
 }
 
 export interface RenderedCell<RecordType> {
@@ -29,12 +35,14 @@ interface ColumnShareType<RecordType> {
 }
 
 export interface ColumnType<RecordType> extends ColumnShareType<RecordType> {
+  dataIndex?: DataIndex;
   render?: (
     value: any,
     record: RecordType,
     index: number
   ) => React.ReactNode | RenderedCell<RecordType>;
   width?: number | string;
+  onCell?: GetComponentProps<RecordType>;
 }
 
 export interface ColumnGroupType<RecordType> extends ColumnShareType<RecordType> {
@@ -53,6 +61,11 @@ type Component<P> =
   | keyof React.ReactHTML;
 
 export type CustomizeComponent = Component<any>;
+
+export type GetComponentProps<DataType> = (
+  data: DataType,
+  index?: number
+) => React.HTMLAttributes<HTMLElement>;
 
 export type GetComponent = (
   path: readonly string[],
