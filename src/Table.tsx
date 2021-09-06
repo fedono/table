@@ -7,7 +7,8 @@ import {
   GetComponent,
   CustomizeComponent,
   GetRowKey,
-  CustomizeScrollBody, GetComponentProps
+  CustomizeScrollBody, GetComponentProps,
+  PanelRender
 } from "./interface";
 import TableContext from "./context/TableContext";
 import BodyContext from "./context/BodyContext";
@@ -15,6 +16,8 @@ import ResizeContext from "./context/ResizeContext";
 import {getPathValue, mergeObject} from "./utils/valueUtil";
 import useColumns from "./hooks/useColumns";
 import Body from './Body';
+import Panel from './Panel';
+import Footer from "./Footer";
 
 interface MemoTableContentProps {
   children: React.ReactNode;
@@ -40,6 +43,7 @@ export interface TableComponents<RecordType> {
 }
 
 export interface TableProps<RecordType = unknown> extends LegacyExpandableProps<RecordType> {
+  prefixCls?: string;
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
@@ -50,17 +54,27 @@ export interface TableProps<RecordType = unknown> extends LegacyExpandableProps<
   components?: TableComponents<RecordType>;
   emptyText?: React.ReactNode | (() => React.ReactNode);
   rowKey?: string | GetRowKey<RecordType>;
+
+  // Additional part
+  title?: PanelRender<RecordType>;
+  footer?: PanelRender<RecordType>;
+  summary?: (data: readonly RecordType[]) => React.ReactNode;
 }
 
 const EMPTY_DATA = [];
 
 function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordType>) {
   const {
+    prefixCls,
     components,
     data,
     onRow,
     rowKey,
     emptyText,
+
+    title,
+    footer,
+    summary,
 
   } = props;
 
@@ -131,10 +145,16 @@ function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordTyp
   );
 
   const TableComponent = getComponent(['table'], 'table');
+  const summaryNode = summary?.(mergedData);
   groupTableNode = (
     <div>
       <TableComponent>
         {bodyTable}
+        {summaryNode && (
+          <Footer>
+            {summaryNode}
+          </Footer>
+        )}
       </TableComponent>
     </div>
   )
@@ -142,7 +162,9 @@ function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordTyp
   let fullTable = (
     <div>
       <MemoTableContent>
+        {title && <Panel className={`${prefixCls}-title`}>{title(mergedData)}</Panel>}
         {groupTableNode}
+        {footer && <Panel className={`${prefixCls}-footer`}>{footer(mergedData)}</Panel>}
       </MemoTableContent>
     </div>
   );

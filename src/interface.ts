@@ -4,6 +4,7 @@ export type Key = React.Key;
 
 export type GetRowKey<RecordType> = (record: RecordType, index?: number) => Key;
 
+export type PanelRender<RecordType> = (data: readonly RecordType[]) => React.ReactNode;
 
 export type DefaultRecordType = Record<string, any>;
 
