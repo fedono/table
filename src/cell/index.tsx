@@ -63,6 +63,7 @@ function Cell<RecordType extends DefaultRecordType>(
 
       if (isRenderCell(renderData)) {
         childNode = renderData.children;
+        // imp 在 column 的 render 自定义的过程中，会自定义 column 的 props，这时候单个的 cell 在渲染的时候，可能会根据 index 有所不同
         cellProps = renderData.props;
       } else {
         childNode = renderData;
@@ -87,10 +88,14 @@ function Cell<RecordType extends DefaultRecordType>(
   } = cellProps || {};
   const mergedColSpan = cellColSpan !== undefined ? cellColSpan : colSpan;
   const mergedRowSpan = cellRowSpan !== undefined ? cellRowSpan : rowSpan;
+  if (mergedColSpan === 0 || mergedRowSpan === 0) {
+    return null;
+  }
+
   const componentProps = {
    title: '',
    ...additionalProps,
-   colSpan: mergedColSpan && mergedColSpan !== 1? mergedColSpan : null,
+   colSpan: mergedColSpan && mergedColSpan !== 1 ? mergedColSpan : null,
    rowSpan: mergedRowSpan && mergedRowSpan !== 1 ? mergedRowSpan : null,
    style: { ...additionalProps.style, ...cellStyle},
     ref: isRefComponent(Component) ? ref : null

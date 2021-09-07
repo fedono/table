@@ -18,6 +18,7 @@ import useColumns from "./hooks/useColumns";
 import Body from './Body';
 import Panel from './Panel';
 import Footer from "./Footer";
+import Header from './Header/Header'; // 后续把这个改成 index 吧，其他的都是 index，这个为啥就不是
 
 interface MemoTableContentProps {
   children: React.ReactNode;
@@ -59,6 +60,8 @@ export interface TableProps<RecordType = unknown> extends LegacyExpandableProps<
   title?: PanelRender<RecordType>;
   footer?: PanelRender<RecordType>;
   summary?: (data: readonly RecordType[]) => React.ReactNode;
+
+  showHeader?: boolean;
 }
 
 const EMPTY_DATA = [];
@@ -76,6 +79,7 @@ function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordTyp
     footer,
     summary,
 
+    showHeader
   } = props;
 
   const mergedData = data || EMPTY_DATA;
@@ -148,7 +152,8 @@ function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordTyp
   const summaryNode = summary?.(mergedData);
   groupTableNode = (
     <div>
-      <TableComponent>
+      <TableComponent border="1" cellspacing="0" cellpadding="0">
+        {showHeader !== false && <Header {...columnContext} /> }
         {bodyTable}
         {summaryNode && (
           <Footer>
@@ -180,6 +185,7 @@ function Table<RecordType extends DefaultRecordType>(props: TableProps<RecordTyp
     columnContext
   ]);
   const ResizeContextValue = React.useMemo(() => ({}));
+
   return (
     <TableContext.Provider value={TableContextValue}>
       <BodyContext.Provider value={BodyContextValue}>

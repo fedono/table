@@ -21,6 +21,12 @@ export interface CellType<RecordType> {
 
   colSpan?: number;
   rowSpan?: number;
+
+  column?: ColumnsType<RecordType>[number];
+
+  // only used for table header
+  colStart?: number;
+  colEnd?: number;
 }
 
 export interface RenderedCell<RecordType> {
@@ -36,6 +42,10 @@ interface ColumnShareType<RecordType> {
 }
 
 export interface ColumnType<RecordType> extends ColumnShareType<RecordType> {
+
+  colSpan?: number;
+  rowSpan?: number;
+
   dataIndex?: DataIndex;
   render?: (
     value: any,
